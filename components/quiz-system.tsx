@@ -302,7 +302,7 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { QUIZ_QUESTIONS } from "@/lib/quiz-data"
+import { getQuestionsByTopic, QUIZ_QUESTIONS } from "@/lib/quiz-data"
 import { ChevronRight, RotateCcw } from "lucide-react"
 import { useState } from "react"
 
@@ -314,6 +314,7 @@ interface Question {
   correctAnswer: number
   category: string
   difficulty: "easy" | "medium" | "hard"
+  topic: "environment" | "health" | "economic" | "technology" | "social"
 }
 
 interface QuizState {
@@ -322,37 +323,43 @@ interface QuizState {
   answers: (number | null)[]
   showResults: boolean
   hasStarted: boolean
-  selectedTopic?: string
+  selectedTopic?: Question['topic']
+  filteredQuestions: Question[] // Track filtered questions in state
 }
 
 export function QuizSystem() {
   const [quizState, setQuizState] = useState<QuizState>({
     currentQuestion: 0,
     score: 0,
-    answers: Array(QUIZ_QUESTIONS.length).fill(null),
+    answers: [],
     showResults: false,
     hasStarted: false,
+    selectedTopic: undefined,
+    filteredQuestions: [],
   })
 
-  const handleStartQuiz = (topic?: string) => {
+  const handleStartQuiz = (topic?: Question['topic']) => {
+    const filtered = topic ? getQuestionsByTopic(topic) : QUIZ_QUESTIONS
     setQuizState({
       currentQuestion: 0,
       score: 0,
-      answers: Array(QUIZ_QUESTIONS.length).fill(null),
+      answers: Array(filtered.length).fill(null),
       showResults: false,
       hasStarted: true,
       selectedTopic: topic,
+      filteredQuestions: filtered,
     })
   }
 
-  const currentQuestion = QUIZ_QUESTIONS[quizState.currentQuestion]
-  const progress = ((quizState.currentQuestion + 1) / QUIZ_QUESTIONS.length) * 100
+  const currentQuestionData = quizState.filteredQuestions[quizState.currentQuestion]
+  const totalQuestions = quizState.filteredQuestions.length
+  const progress = totalQuestions > 0 ? ((quizState.currentQuestion + 1) / totalQuestions) * 100 : 0
 
   const handleAnswerSelect = (optionIndex: number) => {
     const newAnswers = [...quizState.answers]
     newAnswers[quizState.currentQuestion] = optionIndex
 
-    const isCorrect = optionIndex === currentQuestion.correctAnswer
+    const isCorrect = optionIndex === currentQuestionData.correctAnswer
     const newScore = isCorrect ? quizState.score + 1 : quizState.score
 
     setQuizState({
@@ -363,7 +370,7 @@ export function QuizSystem() {
   }
 
   const handleNext = () => {
-    if (quizState.currentQuestion < QUIZ_QUESTIONS.length - 1) {
+    if (quizState.currentQuestion < totalQuestions - 1) {
       setQuizState({
         ...quizState,
         currentQuestion: quizState.currentQuestion + 1,
@@ -380,9 +387,11 @@ export function QuizSystem() {
     setQuizState({
       currentQuestion: 0,
       score: 0,
-      answers: Array(QUIZ_QUESTIONS.length).fill(null),
+      answers: [],
       showResults: false,
       hasStarted: false,
+      selectedTopic: undefined,
+      filteredQuestions: [],
     })
   }
 
@@ -413,7 +422,7 @@ export function QuizSystem() {
             onClick={() => handleStartQuiz("environment")}
           >
             <h3 className="text-xl font-semibold text-foreground mb-2">Environment</h3>
-            <p className="text-sm text-muted-foreground">Learn about ecology and climate</p>
+            <p className="text-sm text-muted-foreground">Learn about ecology and climate ({getQuestionsByTopic('environment').length} questions)</p>
           </Card>
 
           <Card
@@ -421,7 +430,7 @@ export function QuizSystem() {
             onClick={() => handleStartQuiz("health")}
           >
             <h3 className="text-xl font-semibold text-foreground mb-2">Health</h3>
-            <p className="text-sm text-muted-foreground">Wellness and nutrition topics</p>
+            <p className="text-sm text-muted-foreground">Wellness and nutrition topics ({getQuestionsByTopic('health').length} questions)</p>
           </Card>
 
           <Card
@@ -429,7 +438,7 @@ export function QuizSystem() {
             onClick={() => handleStartQuiz("economic")}
           >
             <h3 className="text-xl font-semibold text-foreground mb-2">Economic</h3>
-            <p className="text-sm text-muted-foreground">Economics and sustainability</p>
+            <p className="text-sm text-muted-foreground">Economics and sustainability ({getQuestionsByTopic('economic').length} questions)</p>
           </Card>
 
           <Card
@@ -437,7 +446,7 @@ export function QuizSystem() {
             onClick={() => handleStartQuiz("technology")}
           >
             <h3 className="text-xl font-semibold text-foreground mb-2">Technology</h3>
-            <p className="text-sm text-muted-foreground">Innovation and green tech</p>
+            <p className="text-sm text-muted-foreground">Innovation and green tech ({getQuestionsByTopic('technology').length} questions)</p>
           </Card>
 
           <Card
@@ -445,12 +454,12 @@ export function QuizSystem() {
             onClick={() => handleStartQuiz("social")}
           >
             <h3 className="text-xl font-semibold text-foreground mb-2">Social</h3>
-            <p className="text-sm text-muted-foreground">Community and society</p>
+            <p className="text-sm text-muted-foreground">Community and society ({getQuestionsByTopic('social').length} questions)</p>
           </Card>
 
           <Card className="p-6 cursor-pointer hover:border-primary transition-colors" onClick={() => handleStartQuiz()}>
             <h3 className="text-xl font-semibold text-foreground mb-2">All Topics</h3>
-            <p className="text-sm text-muted-foreground">Mixed questions from all topics</p>
+            <p className="text-sm text-muted-foreground">Mixed questions from all topics ({QUIZ_QUESTIONS.length} questions)</p>
           </Card>
         </div>
       </div>
@@ -458,7 +467,7 @@ export function QuizSystem() {
   }
 
   if (quizState.showResults) {
-    const percentage = Math.round((quizState.score / QUIZ_QUESTIONS.length) * 100)
+    const percentage = totalQuestions > 0 ? Math.round((quizState.score / totalQuestions) * 100) : 0
     const passed = percentage >= 70
 
     return (
@@ -468,8 +477,13 @@ export function QuizSystem() {
           <div className="space-y-2">
             <p className="text-6xl font-bold text-primary">{percentage}%</p>
             <p className="text-xl text-muted-foreground">
-              You scored {quizState.score} out of {QUIZ_QUESTIONS.length}
+              You scored {quizState.score} out of {totalQuestions}
             </p>
+            {quizState.selectedTopic && (
+              <p className="text-lg text-muted-foreground">
+                Topic: {quizState.selectedTopic.charAt(0).toUpperCase() + quizState.selectedTopic.slice(1)}
+              </p>
+            )}
           </div>
         </div>
 
@@ -484,7 +498,7 @@ export function QuizSystem() {
         <div className="space-y-4">
           <h3 className="text-xl font-semibold text-foreground">Review Your Answers</h3>
           <div className="space-y-3">
-            {QUIZ_QUESTIONS.map((q, index) => {
+            {quizState.filteredQuestions.map((q, index) => {
               const userAnswer = quizState.answers[index]
               const isCorrect = userAnswer === q.correctAnswer
 
@@ -499,13 +513,20 @@ export function QuizSystem() {
                       <span
                         className={`text-sm font-semibold ${isCorrect ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
                       >
-                        {isCorrect ? "✓" : "✗"}
+                        {isCorrect ? "Correct" : "Wrong"}
                       </span>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      Your answer: <span className="font-medium">{q.options[userAnswer!]}</span>
-                    </p>
-                    {!isCorrect && (
+                    {userAnswer !== null && (
+                      <p className="text-sm text-muted-foreground">
+                        Your answer: <span className="font-medium">{q.options[userAnswer]}</span>
+                      </p>
+                    )}
+                    {userAnswer === null && (
+                      <p className="text-sm text-muted-foreground">
+                        Your answer: <span className="font-medium">Skipped</span>
+                      </p>
+                    )}
+                    {!isCorrect && userAnswer !== null && (
                       <p className="text-sm text-muted-foreground">
                         Correct answer:{" "}
                         <span className="font-medium text-green-600 dark:text-green-400">
@@ -534,7 +555,7 @@ export function QuizSystem() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-muted-foreground">
-            Question {quizState.currentQuestion + 1} of {QUIZ_QUESTIONS.length}
+            Question {quizState.currentQuestion + 1} of {totalQuestions}
           </p>
           <span className="text-sm font-medium text-primary">{Math.round(progress)}%</span>
         </div>
@@ -546,20 +567,20 @@ export function QuizSystem() {
         {/* Category and Difficulty */}
         <div className="flex items-center gap-2">
           <span className="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-medium">
-            {currentQuestion.category}
+            {currentQuestionData.category}
           </span>
           <span
-            className={`text-xs px-3 py-1 rounded-full font-medium ${getDifficultyColor(currentQuestion.difficulty)}`}
+            className={`text-xs px-3 py-1 rounded-full font-medium ${getDifficultyColor(currentQuestionData.difficulty)}`}
           >
-            {currentQuestion.difficulty.charAt(0).toUpperCase() + currentQuestion.difficulty.slice(1)}
+            {currentQuestionData.difficulty.charAt(0).toUpperCase() + currentQuestionData.difficulty.slice(1)}
           </span>
         </div>
 
         {/* Question Image */}
-        {currentQuestion.image && (
+        {currentQuestionData.image && (
           <div className="relative w-full h-64 rounded-lg overflow-hidden bg-muted">
             <img
-              src={currentQuestion.image || "/placeholder.svg"}
+              src={currentQuestionData.image || "/placeholder.svg"}
               alt="Question illustration"
               className="w-full h-full object-cover"
             />
@@ -567,13 +588,13 @@ export function QuizSystem() {
         )}
 
         {/* Question Text */}
-        <h3 className="text-2xl font-bold text-foreground">{currentQuestion.question}</h3>
+        <h3 className="text-2xl font-bold text-foreground">{currentQuestionData.question}</h3>
 
         {/* Options */}
         <div className="space-y-3">
-          {currentQuestion.options.map((option, index) => {
+          {currentQuestionData.options.map((option, index) => {
             const isSelected = quizState.answers[quizState.currentQuestion] === index
-            const isCorrect = index === currentQuestion.correctAnswer
+            const isCorrect = index === currentQuestionData.correctAnswer
 
             return (
               <button
@@ -615,7 +636,7 @@ export function QuizSystem() {
         className="w-full h-12 text-base gap-2"
         size="lg"
       >
-        {quizState.currentQuestion === QUIZ_QUESTIONS.length - 1 ? "Finish Quiz" : "Next Question"}
+        {quizState.currentQuestion === totalQuestions - 1 ? "Finish Quiz" : "Next Question"}
         <ChevronRight className="h-5 w-5" />
       </Button>
     </div>

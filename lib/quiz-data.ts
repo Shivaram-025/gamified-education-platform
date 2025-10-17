@@ -1,21 +1,151 @@
+// export interface Question {
+//   id: number
+//   question: string
+//   image?: string
+//   options: string[]
+//   correctAnswer: number
+//   category: string
+//   difficulty: "easy" | "medium" | "hard"
+//   topic: "environment" | "health" | "economic" | "technology" | "social"
+// }
+
+// export const QUIZ_QUESTIONS: Question[] = [
+//   // Environment Questions
+//   {
+//     id: 1,
+//     question: "What happens when Earth's average temperature keeps rising?",
+//     image: "/forest-ecosystem-with-trees.jpg",
+//     options: ["More rainfall", "Natural disasters", "Climate change", "Urban development"],
+//     correctAnswer: 0,
+//     category: "Ecology",
+//     difficulty: "medium",
+//     topic: "environment",
+//   },
+//   {
+//     id: 2,
+//     question: "Which of these is a renewable energy source?",
+//     image: "/renewable-energy-solar-wind.jpg",
+//     options: ["Coal", "Natural gas", "Solar power", "Oil"],
+//     correctAnswer: 2,
+//     category: "Energy",
+//     difficulty: "easy",
+//     topic: "environment",
+//   },
+//   {
+//     id: 3,
+//     question: "What percentage of Earth's oxygen is produced by the ocean?",
+//     image: "/ocean-marine-life-conservation.jpg",
+//     options: ["10%", "30%", "50%", "70%"],
+//     correctAnswer: 2,
+//     category: "Marine",
+//     difficulty: "hard",
+//     topic: "environment",
+//   },
+//   {
+//     id: 4,
+//     question: "Which gas is the primary driver of climate change?",
+//     image: "/climate-change-earth-warming.jpg",
+//     options: ["Nitrogen", "Oxygen", "Carbon dioxide", "Hydrogen"],
+//     correctAnswer: 2,
+//     category: "Climate",
+//     difficulty: "easy",
+//     topic: "environment",
+//   },
+//   {
+//     id: 5,
+//     question: "What is soil erosion primarily caused by?",
+//     image: "/soil-erosion-bare-land-tree-stumps.jpg",
+//     options: ["Rainfall", "Deforestation and overgrazing", "Temperature changes", "Volcanic activity"],
+//     correctAnswer: 1,
+//     category: "Ecology",
+//     difficulty: "medium",
+//     topic: "environment",
+//   },
+  
+// ]
+
+// // Filter by topic
+// export const getQuestionsByTopic = (topic: Question['topic']): Question[] => {
+//   return QUIZ_QUESTIONS.filter((q) => q.topic === topic);
+// };
+
+// // Filter by difficulty
+// export const getQuestionsByDifficulty = (difficulty: Question['difficulty']): Question[] => {
+//   return QUIZ_QUESTIONS.filter((q) => q.difficulty === difficulty);
+// };
+
+// // Filter by category (global across all topics)
+// export const getQuestionsByCategory = (category: string): Question[] => {
+//   return QUIZ_QUESTIONS.filter((q) => q.category === category);
+// };
+
+// // Get questions by category within a specific topic
+// export const getQuestionsByCategoryInTopic = (topic: Question['topic'], category: string): Question[] => {
+//   return QUIZ_QUESTIONS.filter((q) => q.topic === topic && q.category === category);
+// };
+
+// // Get all questions for a specific topic and difficulty
+// export const getQuestionsByTopicAndDifficulty = (topic: Question['topic'], difficulty: Question['difficulty']): Question[] => {
+//   return QUIZ_QUESTIONS.filter((q) => q.topic === topic && q.difficulty === difficulty);
+// };
+
+// // Get unique topics
+// export const getAllTopics = (): Question['topic'][] => {
+//   return [...new Set(QUIZ_QUESTIONS.map((q) => q.topic))] as Question['topic'][];
+// };
+
+// // Get unique categories globally
+// export const getAllCategories = (): string[] => {
+//   return [...new Set(QUIZ_QUESTIONS.map((q) => q.category))];
+// };
+
+// // Get unique categories for a specific topic
+// export const getCategoriesByTopic = (topic: Question['topic']): string[] => {
+//   return [...new Set(getQuestionsByTopic(topic).map((q) => q.category))];
+// };
+
+// // Get unique difficulties globally
+// export const getAllDifficulties = (): Question['difficulty'][] => {
+//   return [...new Set(QUIZ_QUESTIONS.map((q) => q.difficulty))] as Question['difficulty'][];
+// };
+
+// // Count questions per topic
+// export const getQuestionCountByTopic = (topic: Question['topic']): number => {
+//   return getQuestionsByTopic(topic).length;
+// };
+
+// // Get a random subset of questions (e.g., for mixed quizzes)
+// export const getRandomQuestions = (count: number, topic?: Question['topic']): Question[] => {
+//   const source = topic ? getQuestionsByTopic(topic) : QUIZ_QUESTIONS;
+//   const shuffled = [...source].sort(() => 0.5 - Math.random());
+//   return shuffled.slice(0, count);
+// };
+
+// // Example usage:
+// // const environmentQuestions = getQuestionsByTopic('environment');
+// // const easyEconomics = getQuestionsByTopicAndDifficulty('economic', 'easy');
+// // const ecologyInEnv = getQuestionsByCategoryInTopic('environment', 'Ecology');
+
+
+// quiz-data.ts
 export interface Question {
-  id: number
-  question: string
-  image?: string
-  options: string[]
-  correctAnswer: number
-  category: string
-  difficulty: "easy" | "medium" | "hard"
-  topic: "environment" | "health" | "economic" | "technology" | "social"
+  id: number;
+  question: string;
+  image?: string;
+  options: string[];
+  correctAnswer: number;
+  category: string;
+  difficulty: "easy" | "medium" | "hard";
+  topic: "environment" | "health" | "economic" | "technology" | "social";
 }
 
 export const QUIZ_QUESTIONS: Question[] = [
   // Environment Questions
   {
     id: 1,
-    question: "What is the primary cause of deforestation in tropical regions?",
+    question: "What happens when Earth's average temperature keeps rising?",
     image: "/forest-ecosystem-with-trees.jpg",
-    options: ["Agricultural expansion", "Natural disasters", "Climate change", "Urban development"],
+    options: ["More rainfall", "Natural disasters", "Climate change", "Urban development"],
     correctAnswer: 0,
     category: "Ecology",
     difficulty: "medium",
@@ -229,12 +359,52 @@ export const QUIZ_QUESTIONS: Question[] = [
     difficulty: "easy",
     topic: "social",
   },
-]
+];
 
-export const getQuestionsByTopic = (topic: string) => {
-  return QUIZ_QUESTIONS.filter((q) => q.topic === topic)
-}
+// Export the filter function
+export const getQuestionsByTopic = (topic: Question['topic']): Question[] => {
+  return QUIZ_QUESTIONS.filter((q) => q.topic === topic);
+};
 
-export const getQuestionsByDifficulty = (difficulty: string) => {
-  return QUIZ_QUESTIONS.filter((q) => q.difficulty === difficulty)
-}
+// Optional: Additional exports for completeness (from previous enhancements)
+export const getQuestionsByDifficulty = (difficulty: Question['difficulty']): Question[] => {
+  return QUIZ_QUESTIONS.filter((q) => q.difficulty === difficulty);
+};
+
+export const getQuestionsByCategory = (category: string): Question[] => {
+  return QUIZ_QUESTIONS.filter((q) => q.category === category);
+};
+
+export const getQuestionsByCategoryInTopic = (topic: Question['topic'], category: string): Question[] => {
+  return QUIZ_QUESTIONS.filter((q) => q.topic === topic && q.category === category);
+};
+
+export const getQuestionsByTopicAndDifficulty = (topic: Question['topic'], difficulty: Question['difficulty']): Question[] => {
+  return QUIZ_QUESTIONS.filter((q) => q.topic === topic && q.difficulty === difficulty);
+};
+
+export const getAllTopics = (): Question['topic'][] => {
+  return [...new Set(QUIZ_QUESTIONS.map((q) => q.topic))] as Question['topic'][];
+};
+
+export const getAllCategories = (): string[] => {
+  return [...new Set(QUIZ_QUESTIONS.map((q) => q.category))];
+};
+
+export const getCategoriesByTopic = (topic: Question['topic']): string[] => {
+  return [...new Set(getQuestionsByTopic(topic).map((q) => q.category))];
+};
+
+export const getAllDifficulties = (): Question['difficulty'][] => {
+  return [...new Set(QUIZ_QUESTIONS.map((q) => q.difficulty))] as Question['difficulty'][];
+};
+
+export const getQuestionCountByTopic = (topic: Question['topic']): number => {
+  return getQuestionsByTopic(topic).length;
+};
+
+export const getRandomQuestions = (count: number, topic?: Question['topic']): Question[] => {
+  const source = topic ? getQuestionsByTopic(topic) : QUIZ_QUESTIONS;
+  const shuffled = [...source].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};

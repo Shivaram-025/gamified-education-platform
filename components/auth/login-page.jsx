@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Leaf } from 'lucide-react';
+import { useState } from 'react';
 import LoginForm from './login-form';
 import SignupForm from './signup-form';
 
@@ -15,7 +15,7 @@ export default function LoginPage({ onLogin }) {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Leaf className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground">EcoLearn</h1>
+            <h1 className="text-3xl font-bold text-foreground">EduPlay</h1>
           </div>
           <p className="text-muted-foreground">Learn about the environment through gamified quizzes</p>
         </div>

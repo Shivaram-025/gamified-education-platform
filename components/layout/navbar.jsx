@@ -1,7 +1,7 @@
 "use client"
 
+import { Leaf, LogOut, Menu, X } from "lucide-react"
 import { useState } from "react"
-import { Menu, X, Leaf, LogOut } from "lucide-react"
 
 export default function Navbar({ user, currentPage, onNavigate, onLogout }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -20,7 +20,7 @@ export default function Navbar({ user, currentPage, onNavigate, onLogout }) {
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => onNavigate("dashboard")}>
             <Leaf className="w-6 h-6 text-emerald-600" />
-            <span className="text-xl font-bold text-emerald-900">EcoLearn</span>
+            <span className="text-xl font-bold text-emerald-900">EduPlay</span>
           </div>
 
           {/* Desktop Navigation */}

@@ -50,7 +50,7 @@ export function Navigation({ onToggleSidebar, isSidebarOpen, currentUser, onLogo
           <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="lg:hidden">
             <Menu className="h-5 w-5" />
           </Button>
-          <h1 className="text-xl font-bold text-foreground">EcoLearn</h1>
+          <h1 className="text-xl font-bold text-foreground">EduPlay</h1>
         </div>
 
         <div className="flex items-center gap-4">

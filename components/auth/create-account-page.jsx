@@ -1,7 +1,7 @@
 "use client"
 
+import { Leaf, Lock, Mail, User } from "lucide-react"
 import { useState } from "react"
-import { Mail, Lock, User, Leaf } from "lucide-react"
 
 export default function CreateAccountPage({ onCreateAccount, onSwitchToLogin }) {
   const [name, setName] = useState("")
@@ -36,7 +36,7 @@ export default function CreateAccountPage({ onCreateAccount, onSwitchToLogin }) 
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Leaf className="w-8 h-8 text-emerald-600" />
-            <h1 className="text-3xl font-bold text-emerald-900">EcoLearn</h1>
+            <h1 className="text-3xl font-bold text-emerald-900">EduPlay</h1>
           </div>
           <p className="text-emerald-700">Learn. Play. Save the Planet.</p>
         </div>
